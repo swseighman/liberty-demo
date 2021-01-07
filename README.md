@@ -1,4 +1,4 @@
-## RBC GraalVM Demo
+## GraalVM & Liberty Demo
 
 Agenda:
 
