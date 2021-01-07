@@ -146,7 +146,7 @@ Testing with 20,000,000 (20 million) iterations
 Time taken to complete in milliseconds: 140 ; and result is: 3000000000
 real	0m0.151s
 user	0m0.003s
-sys		0m0.005s
+sys	0m0.005s
 ```
 
 As you can see, we realized significant improvement in performance by simply replacing the standard Hotspot VM with GraalVM.
