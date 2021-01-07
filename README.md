@@ -29,6 +29,11 @@ java version "1.8.0_271"
 Java(TM) SE Runtime Environment (build 1.8.0_271-b09)
 Java HotSpot(TM) 64-Bit Server VM (build 25.271-b09, mixed mode)
 ```
+Make certain MySQL is up and running:
+
+```
+$ sudo systemctl status mysqld
+```
 
 Run the 'fat jar' app and note the startup time and memory utilization.
 
@@ -164,12 +169,6 @@ $ docker build -f Dockerfile-jar -t petclinic-mysql-jar:1.0 .
 
 ```
 $ docker imagesREPOSITORY                       TAG          IMAGE ID       CREATED          SIZEpetclinic-mysql-jar              1.0          0e991e1ed702   20 minutes ago   1.44GB
-```
-
-Make certain MySQL is up and running:
-
-```
-$ sudo systemctl status mysqld
 ```
 
 Run the jar docker image:
