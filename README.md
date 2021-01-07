@@ -39,7 +39,7 @@ $ java -jar target/petclinic-jpa-0.0.1-SNAPSHOT.jar
 Linux:
 
 ```
-$ pmap <PID> | tail -n 1 | awk '/[0-9]K/{print $2}'
+$ pmap <PID> | tail -n 1 | gawk '/total/ { a=strtonum($2); b=int(a/1024); printf "Total memory used is: "; printf b" MB\n"};'
 ```
 
 Mac:
@@ -65,7 +65,7 @@ Check memory usage:
 Linux:
 
 ```
-$ pmap <PID> | tail -n 1 | awk '/[0-9]K/{print $2}'
+$ pmap <PID> | tail -n 1 | gawk '/total/ { a=strtonum($2); b=int(a/1024); printf "Total memory used is: "; printf b" MB\n"};'
 ```
 
 Mac:
@@ -148,4 +148,87 @@ As you can see, we realized significant imrpovement in performance by simply rep
 
 ### Running in Docker/Podman
 
+```
+$ cd graalvm-native-image-spring-petclinic
+```
+Create a new file called `Dockerfile-jar` and add the following:
 
+```
+FROM oracle/graalvm-ce:20.3.0-java11ENV MYSQL_HOST=mysql \    DO_NOT_INITIALIZE=never \    ORACLE_HOST=oracle \    VERSION=v0.11COPY target/petclinic-jpa-0.0.1-SNAPSHOT.jar .EXPOSE 8080CMD ["java","-jar","petclinic-jpa-0.0.1-SNAPSHOT.jar"]
+```
+Build the image:
+
+```
+$ docker build -f Dockerfile-jar -t petclinic-mysql-jar:1.0 .
+```
+
+```
+$ docker imagesREPOSITORY                       TAG          IMAGE ID       CREATED          SIZEpetclinic-mysql-jar              1.0          0e991e1ed702   20 minutes ago   1.44GB
+```
+
+Make certain MySQL is up and running:
+
+```
+$ sudo systemctl status mysqld
+```
+
+Run the jar docker image:
+
+```
+$ docker run --net="host" -i --rm -p 8080:8080 petclinic-mysql-jar:1.0
+```
+```
+Started PetClinicApplication in 5.561 seconds (JVM running for 6.261)
+```
+
+In a seperate terminal window, get the container ID and then display the container stats:
+
+```
+$ docker ps
+CONTAINER ID  IMAGE                      COMMAND  CREATED        STATUS            PORTS   NAMES
+e5c825a82215  petclinic-mysql-jar:1.0             6 seconds ago  Up 6 seconds ago          dmiring_lichterman
+
+$ docker stats 86f6525e4ccd
+CONTAINER ID   NAME                  CPU %     MEM USAGE / LIMIT     MEM %     NET I/O   BLOCK I/O   PIDS86f6525e4ccd   admiring_lichterman   0.13%     943.8MiB / 25.02GiB   3.68%     0B / 0B   0B / 0B     56
+```
+
+Next, edit `Dockerfile-multistage` and change the GraalVM version on the first line to 20.3.0 (Java 8 or 11):
+
+```
+FROM oracle/graalvm-ce:20.3.0-java8 as graalvm
+```
+
+Create the docker image (takes several minutes so build it in advance):
+
+```
+$ ./build-on-docker.sh
+```
+
+```
+$ docker images
+REPOSITORY                                       TAG            IMAGE ID      CREATED       SIZE
+localhost/marthenl/petclinic-mysql-native-image  0.12           3499c3bb8dc1  10 hrs ago   245 MB
+
+```
+Run the native image docker image:
+
+```
+$ docker run --net="host" -i --rm -p 8080:8080 localhost/marthenl/petclinic-mysql-native-image:0.12
+```
+
+```
+Started PetClinicApplication in 0.571 seconds (JVM running for 0.592)
+```
+
+In a seperate terminal window, get the container ID and then display the container stats:
+
+```
+$ docker ps
+CONTAINER ID  IMAGE                                                 COMMAND  CREATED        STATUS            PORTS   NAMES
+e5c825a82215  localhost/marthenl/petclinic-mysql-native-image:0.12           6 seconds ago  Up 6 seconds ago          friendly_neumann
+
+$ docker stats e5c825a82215
+CONTAINER ID   NAME               CPU %     MEM USAGE / LIMIT     MEM %     NET I/O   BLOCK I/O   PIDSe5c825a82215   friendly_neumann   0.00%     119.1MiB / 25.02GiB   0.46%     0B / 0B   0B / 0B     31
+```
+
+As you can see, the native image docker container is much smaller and starts much faster than the 'fat-jar' version.
