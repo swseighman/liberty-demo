@@ -18,7 +18,6 @@ If you haven't already, package the application:
 ```
 $ cd graalvm-native-image-spring-petclinic
 $ mvn package
-
 ```
 
 Make certain you're using Java 8 Hotspot VM:
