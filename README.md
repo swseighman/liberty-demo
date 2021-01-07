@@ -144,9 +144,9 @@ user	0m0.003s
 sys		0m0.005s
 ```
 
-As you can see, we realized significant imrpovement in performance by simply replacing the standard Hotspot VM with GraalVM.
+As you can see, we realized significant improvement in performance by simply replacing the standard Hotspot VM with GraalVM.
 
-### Running in Docker/Podman
+### Running with Docker/Podman
 
 ```
 $ cd graalvm-native-image-spring-petclinic
