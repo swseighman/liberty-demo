@@ -17,7 +17,7 @@ If you haven't already, package the application:
 
 ```
 $ cd graalvm-native-image-spring-petclinic
-$ mvn package
+$ mvn package -DskipTests
 ```
 
 Make certain you're using Java 8 Hotspot VM:
@@ -33,6 +33,7 @@ Make certain MySQL is up and running:
 
 ```
 $ sudo systemctl status mysqld
+$ sudo systemctl status mysql (for Ubuntu)
 ```
 
 Run the 'fat jar' app and note the startup time and memory utilization.
@@ -206,13 +207,13 @@ $ ./build-on-docker.sh
 ```
 $ docker images
 REPOSITORY                                       TAG            IMAGE ID      CREATED       SIZE
-localhost/marthenl/petclinic-mysql-native-image  0.12           3499c3bb8dc1  10 hrs ago   245 MB
+marthenl/petclinic-mysql-native-image  0.12           3499c3bb8dc1  10 hrs ago   245 MB
 
 ```
 Run the native image docker image:
 
 ```
-$ docker run --net="host" -i --rm -p 8080:8080 localhost/marthenl/petclinic-mysql-native-image:0.12
+$ docker run --net="host" -i --rm -p 8080:8080 marthenl/petclinic-mysql-native-image:0.12
 ```
 
 ```
