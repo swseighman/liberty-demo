@@ -10,6 +10,7 @@ Agenda:
 	* Running Native Image in Docker/Podman
 	* (Optional) Demonstrate on Kubernetes
 
+Credit goes to Marthen Luther, this is a fork of his original projects.
 
 ### Comparing Spring Pet Clinic Performance Using Hotspot and Native Image
 
